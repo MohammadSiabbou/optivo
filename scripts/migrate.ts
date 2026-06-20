@@ -1,7 +1,10 @@
 /**
  * One-shot migration runner.
+ * Reads and executes all .sql files from lib/db/migrations in order.
  * Run with: node --env-file-if-exists=/vercel/share/.env.project -r tsx/esm scripts/migrate.ts
  */
+import fs from 'fs'
+import path from 'path'
 import { Pool } from 'pg'
 import { Signer } from '@aws-sdk/rds-signer'
 import { awsCredentialsProvider } from '@vercel/functions/oidc'
@@ -30,18 +33,19 @@ async function main() {
 
   const client = await pool.connect()
   try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS clients (
-        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-        name        TEXT        NOT NULL,
-        email       TEXT        NOT NULL UNIQUE,
-        password    TEXT        NOT NULL,
-        logo_url    TEXT,
-        created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-        updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-      );
-    `)
-    console.log('[migrate] clients table ready.')
+    // Read and execute all .sql files in migrations directory
+    const migrationsDir = path.join(process.cwd(), 'lib', 'db', 'migrations')
+    const files = fs.readdirSync(migrationsDir).filter((f) => f.endsWith('.sql')).sort()
+
+    for (const file of files) {
+      const filePath = path.join(migrationsDir, file)
+      const sql = fs.readFileSync(filePath, 'utf-8')
+      console.log(`[migrate] Running ${file}...`)
+      await client.query(sql)
+      console.log(`[migrate] ✓ ${file} completed`)
+    }
+
+    console.log('[migrate] All migrations completed successfully.')
   } finally {
     client.release()
     await pool.end()
