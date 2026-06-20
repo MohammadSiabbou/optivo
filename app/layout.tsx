@@ -10,8 +10,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Optivo — Studio Management for Photographers',
+  description: 'Manage your shoots, share galleries, and deliver beautiful client experiences with Optivo.',
   generator: 'v0.app',
   icons: {
     icon: [
