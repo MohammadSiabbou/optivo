@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getMessage } from '@/lib/i18n'
 import { AuthBrandPanel } from '@/components/auth/AuthBrandPanel'
 import { RegisterForm } from '@/components/auth/RegisterForm'
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default function RegisterPage() {
+  const locale = 'en'
   return (
     <main className="min-h-screen flex">
       <AuthBrandPanel />
@@ -22,10 +24,10 @@ export default function RegisterPage() {
 
           <header className="mb-8 space-y-1">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground text-balance">
-              Create your account
+              {getMessage(locale, 'auth.register.title')}
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Get started in under two minutes.
+              {getMessage(locale, 'auth.register.subtitle')}
             </p>
           </header>
 

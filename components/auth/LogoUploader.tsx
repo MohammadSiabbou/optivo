@@ -11,15 +11,17 @@ import { useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Upload, X, ImageIcon } from 'lucide-react'
 import { LOGO_MAX_BYTES, LOGO_PREFERRED, logoSizeWarning } from '@/lib/validation/client'
+import { getMessage } from '@/lib/i18n'
 import { FieldError, FieldWarning } from './FieldAtoms'
 import { cn } from '@/lib/utils'
 
 interface LogoUploaderProps {
-  onUploadComplete: (url: string) => void
-  onClear: () => void
+  locale?: string
+  onUploadComplete?: (url: string) => void
+  onClear?: () => void
 }
 
-export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
+export function LogoUploader({ locale = 'en', onUploadComplete, onClear }: LogoUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
@@ -37,7 +39,11 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
 
       // 1. Size check
       if (file.size > LOGO_MAX_BYTES) {
-        setSizeError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum is 5 MB.`)
+        setSizeError(
+          getMessage(locale, 'auth.validation.fileTooLarge', {
+            size: (file.size / 1024 / 1024).toFixed(1),
+          })
+        )
         return
       }
 
@@ -48,7 +54,7 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
 
       const img = new window.Image()
       img.onload = () => {
-        const warn = logoSizeWarning(img.naturalWidth, img.naturalHeight)
+        const warn = logoSizeWarning(img.naturalWidth, img.naturalHeight, locale)
         setDimensionWarning(warn)
         URL.revokeObjectURL(objectUrl)
       }
@@ -62,21 +68,21 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
         const res = await fetch('/api/clients/upload-logo', { method: 'POST', body: fd })
         const json = await res.json()
         if (!res.ok) {
-          setUploadError(json.error ?? 'Upload failed.')
+          setUploadError(json.error ?? getMessage(locale, 'auth.common.uploadFailed'))
           setPreview(null)
           setFileName(null)
           return
         }
-        onUploadComplete(json.url)
+        onUploadComplete?.(json.url)
       } catch {
-        setUploadError('Upload failed. Please try again.')
+        setUploadError(getMessage(locale, 'auth.common.uploadFailed'))
         setPreview(null)
         setFileName(null)
       } finally {
         setUploading(false)
       }
     },
-    [onUploadComplete],
+    [locale, onUploadComplete],
   )
 
   const handleFiles = (files: FileList | null) => {
@@ -91,18 +97,18 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
     setDimensionWarning(null)
     setUploadError(null)
     if (inputRef.current) inputRef.current.value = ''
-    onClear()
+    onClear?.()
   }
 
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-foreground/80">
-        Studio logo <span className="text-muted-foreground font-normal">(optional)</span>
+        {getMessage(locale, 'auth.common.studioLogo')} <span className="text-muted-foreground font-normal">{getMessage(locale, 'auth.common.optional')}</span>
       </label>
 
       {/* Hint */}
       <p className="text-xs text-muted-foreground">
-        Preferred dimensions: <span className="font-medium text-foreground/70">400 × 120 px</span> — PNG or SVG recommended. Max 5 MB.
+        {getMessage(locale, 'auth.register.logoHint').replace('400 × 120 px', '')} <span className="font-medium text-foreground/70">{getMessage(locale, 'auth.register.logoPreferred')}</span> — PNG or SVG recommended. Max 5 MB.
       </p>
 
       {preview ? (
@@ -114,16 +120,16 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-medium text-foreground">{fileName}</p>
             {uploading && (
-              <p className="text-xs text-muted-foreground mt-0.5">Uploading…</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{getMessage(locale, 'auth.common.uploading')}</p>
             )}
             {!uploading && !uploadError && (
-              <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">Uploaded</p>
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">{getMessage(locale, 'auth.common.uploaded')}</p>
             )}
           </div>
           <button
             type="button"
             onClick={handleClear}
-            aria-label="Remove logo"
+            aria-label={getMessage(locale, 'auth.common.removeLogoAriaLabel')}
             className="shrink-0 rounded-md p-1 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="size-4" />
@@ -149,11 +155,11 @@ export function LogoUploader({ onUploadComplete, onClear }: LogoUploaderProps) {
               ? 'border-ring bg-muted/50'
               : 'border-border bg-muted/20 hover:border-ring/60 hover:bg-muted/30',
           )}
-          aria-label="Upload logo — click or drag and drop"
+          aria-label={getMessage(locale, 'auth.common.uploadLogo')}
         >
           <ImageIcon className="size-7 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground/70">Click to upload</span> or drag &amp; drop
+            <span className="font-medium text-foreground/70">{getMessage(locale, 'auth.common.clickUpload')}</span> {getMessage(locale, 'auth.common.dragDrop')}
           </span>
         </button>
       )}

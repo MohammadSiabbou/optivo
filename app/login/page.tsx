@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getMessage } from '@/lib/i18n'
 import { AuthBrandPanel } from '@/components/auth/AuthBrandPanel'
 import { LoginForm } from '@/components/auth/LoginForm'
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default function LoginPage() {
+  const locale = 'en'
   return (
     <main className="min-h-screen flex">
       <AuthBrandPanel />
@@ -22,10 +24,10 @@ export default function LoginPage() {
 
           <header className="mb-8 space-y-1">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground text-balance">
-              Welcome back
+              {getMessage(locale, 'auth.login.title')}
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Sign in to your studio account.
+              {getMessage(locale, 'auth.login.subtitle')}
             </p>
           </header>
 

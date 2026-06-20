@@ -5,11 +5,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { validateEmail } from '@/lib/validation/client'
+import { getMessage } from '@/lib/i18n'
 import { InputField, FormError } from './FieldAtoms'
 import { Button } from '@/components/ui/button'
 
 export function LoginForm() {
   const router = useRouter()
+  const locale = 'en'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,8 +25,8 @@ export function LoginForm() {
     e.preventDefault()
     setFormError(null)
 
-    const eErr = validateEmail(email)
-    const pErr = !password ? 'Password is required.' : undefined
+    const eErr = validateEmail(email, locale)
+    const pErr = !password ? getMessage(locale, 'auth.validation.passwordRequired') : undefined
     setEmailError(eErr ?? undefined)
     setPasswordError(pErr)
     if (eErr || pErr) return
@@ -38,12 +40,12 @@ export function LoginForm() {
       })
       const json = await res.json()
       if (!res.ok) {
-        setFormError(json.error ?? 'Invalid email or password.')
+        setFormError(json.error ?? getMessage(locale, 'auth.login.invalidCredentials'))
         return
       }
       router.push('/dashboard')
     } catch {
-      setFormError('An unexpected error occurred. Please try again.')
+      setFormError(getMessage(locale, 'auth.common.unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -54,16 +56,16 @@ export function LoginForm() {
       <FormError message={formError} />
 
       <InputField
-        label="Email"
+        label={getMessage(locale, 'auth.login.fieldErrors.email')}
         id="email"
         type="email"
         autoComplete="email"
-        placeholder="hello@lumierestudio.com"
+        placeholder={getMessage(locale, 'auth.login.emailPlaceholder')}
         required
         value={email}
         onChange={(e) => {
           setEmail(e.target.value)
-          setEmailError(validateEmail(e.target.value) ?? undefined)
+          setEmailError(validateEmail(e.target.value, locale) ?? undefined)
         }}
         error={emailError}
         errorId="login-email-error"
@@ -73,22 +75,22 @@ export function LoginForm() {
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label htmlFor="login-password" className="text-sm font-medium text-foreground/80">
-            Password<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
+            {getMessage(locale, 'auth.login.fieldErrors.password')}<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
           </label>
           {/* Placeholder for future forgot-password flow */}
-          <span className="text-xs text-muted-foreground">Forgot password?</span>
+          <span className="text-xs text-muted-foreground">{getMessage(locale, 'auth.login.forgotPassword')}</span>
         </div>
         <div className="relative">
           <input
             id="login-password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
-            placeholder="Your password"
+            placeholder={getMessage(locale, 'auth.login.passwordPlaceholder')}
             required
             value={password}
             onChange={(e) => {
               setPassword(e.target.value)
-              setPasswordError(e.target.value ? undefined : 'Password is required.')
+              setPasswordError(e.target.value ? undefined : getMessage(locale, 'auth.validation.passwordRequired'))
             }}
             aria-invalid={!!passwordError}
             aria-describedby={passwordError ? 'login-password-error' : undefined}
@@ -104,7 +106,7 @@ export function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? getMessage(locale, 'auth.common.hidePassword') : getMessage(locale, 'auth.common.showPassword')}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
           >
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -120,13 +122,13 @@ export function LoginForm() {
         disabled={loading}
         className="w-full h-11 text-sm font-semibold rounded-lg bg-[var(--auth-accent)] text-[var(--auth-accent-foreground)] hover:opacity-90 transition-opacity border-0"
       >
-        {loading ? 'Signing in…' : 'Sign in'}
+        {loading ? getMessage(locale, 'auth.login.submitLoading') : getMessage(locale, 'auth.login.submitButton')}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        {"Don't have an account?"}{' '}
+        {getMessage(locale, 'auth.login.noAccount')}{' '}
         <Link href="/register" className="font-medium text-foreground hover:underline underline-offset-4 transition-colors">
-          Create one
+          {getMessage(locale, 'auth.login.createLink')}
         </Link>
       </p>
     </form>

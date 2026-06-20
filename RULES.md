@@ -24,3 +24,4 @@ it will give them the ability to:
 - never make architecture decisions for yourself, always ask the user, we need to keep the architecture clean.
 - never commit unless asked to
 - always write tests for your code, with as much coverage as we can. use vitest
+- never write user side strings as static, we need i18n support here, for now we will have just english but we might add new languages later so dont use static strings

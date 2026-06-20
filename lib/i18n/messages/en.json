@@ -1,0 +1,77 @@
+{
+  "auth": {
+    "brand": {
+      "tagline": "Every shoot, every client, in one place.",
+      "subtitle": "Manage shoots, deliver protected galleries, and build the client experience your work deserves.",
+      "copyright": "© {year} Optivo"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Get started in under two minutes.",
+      "namePlaceholder": "Lumière Studio",
+      "emailPlaceholder": "hello@lumierestudio.com",
+      "passwordPlaceholder": "Min. 8 characters with a number",
+      "confirmPlaceholder": "Repeat your password",
+      "logoHint": "Preferred dimensions: 400 × 120 px — PNG or SVG recommended. Max 5 MB.",
+      "logoPreferred": "400 × 120 px",
+      "submitButton": "Create account",
+      "submitLoading": "Creating account…",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "fieldErrors": {
+        "name": "Studio / business name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "required": "is required"
+      }
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your studio account.",
+      "emailPlaceholder": "hello@lumierestudio.com",
+      "passwordPlaceholder": "Your password",
+      "forgotPassword": "Forgot password?",
+      "submitButton": "Sign in",
+      "submitLoading": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "createLink": "Create one",
+      "invalidCredentials": "Invalid email or password.",
+      "fieldErrors": {
+        "email": "Email",
+        "password": "Password",
+        "passwordRequired": "Password is required."
+      }
+    },
+    "common": {
+      "studioLogo": "Studio logo",
+      "optional": "(optional)",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "showPasswordConfirm": "Show password confirmation",
+      "hidePasswordConfirm": "Hide password confirmation",
+      "uploadLogo": "Upload logo — click or drag and drop",
+      "clickUpload": "Click to upload",
+      "dragDrop": "or drag & drop",
+      "uploading": "Uploading…",
+      "uploaded": "Uploaded",
+      "removeLogoAriaLabel": "Remove logo",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "uploadFailed": "Upload failed. Please try again."
+    },
+    "validation": {
+      "nameRequired": "Studio name is required.",
+      "nameMinLength": "Studio name must be at least 2 characters.",
+      "nameMaxLength": "Studio name must be at most 100 characters.",
+      "emailInvalid": "Please enter a valid email address.",
+      "emailRequired": "Email is required.",
+      "passwordMinLength": "Password must be at least 8 characters.",
+      "passwordNoNumber": "Password must contain at least one number.",
+      "passwordRequired": "Password is required.",
+      "passwordMismatch": "Passwords do not match.",
+      "fileTooLarge": "File too large ({size} MB). Maximum is 5 MB.",
+      "dimensionWarning": "Image dimensions ({width}×{height} px) are outside the preferred range (400×120 px). It may not look optimal."
+    }
+  }
+}

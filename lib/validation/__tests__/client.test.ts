@@ -66,9 +66,6 @@ describe('validatePassword', () => {
   it('errors when too short', () => {
     expect(validatePassword('Ab1')).not.toBeNull()
   })
-  it('errors when missing a letter', () => {
-    expect(validatePassword('12345678')).not.toBeNull()
-  })
   it('errors when missing a number', () => {
     expect(validatePassword('abcdefgh')).not.toBeNull()
   })

@@ -1,10 +1,10 @@
 /**
  * Shared validation rules for client (photographer/studio) auth.
  *
- * These constraints are intentionally plain functions — no library
- * dependencies — so they can be imported on both the frontend (for reactive
- * field-level feedback) and the backend (use-case layer re-validation).
+ * All validation functions accept a locale parameter and use i18n messages.
+ * This ensures consistent error messages between frontend and backend.
  */
+import { getMessage } from '@/lib/i18n'
 
 // ---------------------------------------------------------------------------
 // Preferred logo dimensions (px)
@@ -16,43 +16,45 @@ export const LOGO_MAX_BYTES = 5 * 1024 * 1024 // 5 MB
 // Field rules
 // ---------------------------------------------------------------------------
 
-export function validateName(name: string): string | null {
-  if (!name || name.trim().length === 0) return 'Name is required.'
-  if (name.trim().length < 2) return 'Name must be at least 2 characters.'
-  if (name.trim().length > 120) return 'Name must be 120 characters or fewer.'
+export function validateName(name: string, locale: string = 'en'): string | null {
+  if (!name || name.trim().length === 0) return getMessage(locale, 'auth.validation.nameRequired')
+  if (name.trim().length < 2) return getMessage(locale, 'auth.validation.nameMinLength')
+  if (name.trim().length > 120) return getMessage(locale, 'auth.validation.nameMaxLength')
   return null
 }
 
-export function validateEmail(email: string): string | null {
-  if (!email || email.trim().length === 0) return 'Email is required.'
+export function validateEmail(email: string, locale: string = 'en'): string | null {
+  if (!email || email.trim().length === 0) return getMessage(locale, 'auth.validation.emailRequired')
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!re.test(email.trim())) return 'Enter a valid email address.'
-  if (email.length > 254) return 'Email is too long.'
+  if (!re.test(email.trim())) return getMessage(locale, 'auth.validation.emailInvalid')
+  if (email.length > 254) return getMessage(locale, 'auth.validation.emailInvalid')
   return null
 }
 
-export function validatePassword(password: string): string | null {
-  if (!password) return 'Password is required.'
-  if (password.length < 8) return 'Password must be at least 8 characters.'
-  if (password.length > 72) return 'Password must be 72 characters or fewer.'
-  if (!/[A-Za-z]/.test(password)) return 'Password must contain at least one letter.'
-  if (!/[0-9]/.test(password)) return 'Password must contain at least one number.'
+export function validatePassword(password: string, locale: string = 'en'): string | null {
+  if (!password) return getMessage(locale, 'auth.validation.passwordRequired')
+  if (password.length < 8) return getMessage(locale, 'auth.validation.passwordMinLength')
+  if (password.length > 72) return getMessage(locale, 'auth.validation.passwordMinLength')
+  if (!/[0-9]/.test(password)) return getMessage(locale, 'auth.validation.passwordNoNumber')
   return null
 }
 
-export function validatePasswordConfirm(password: string, confirm: string): string | null {
-  if (!confirm) return 'Please confirm your password.'
-  if (password !== confirm) return 'Passwords do not match.'
+export function validatePasswordConfirm(password: string, confirm: string, locale: string = 'en'): string | null {
+  if (!confirm) return getMessage(locale, 'auth.validation.passwordRequired')
+  if (password !== confirm) return getMessage(locale, 'auth.validation.passwordMismatch')
   return null
 }
 
 // ---------------------------------------------------------------------------
 // Logo dimension warning (non-blocking)
 // ---------------------------------------------------------------------------
-export function logoSizeWarning(width: number, height: number): string | null {
+export function logoSizeWarning(width: number, height: number, locale: string = 'en'): string | null {
   const { minW, maxW, minH, maxH } = LOGO_PREFERRED
   if (width < minW || width > maxW || height < minH || height > maxH) {
-    return `For the best appearance, use a logo between ${minW}×${minH} px and ${maxW}×${maxH} px. Your image (${width}×${height} px) may not look its best.`
+    return getMessage(locale, 'auth.validation.dimensionWarning', { 
+      width: `${width}×${height}`, 
+      height: `${minW}×${minH}`
+    })
   }
   return null
 }
@@ -75,12 +77,12 @@ export interface LoginPayload {
 
 export type FieldErrors<T> = Partial<Record<keyof T, string>>
 
-export function validateRegister(payload: RegisterPayload): FieldErrors<RegisterPayload> {
+export function validateRegister(payload: RegisterPayload, locale: string = 'en'): FieldErrors<RegisterPayload> {
   const errors: FieldErrors<RegisterPayload> = {}
-  const name = validateName(payload.name)
-  const email = validateEmail(payload.email)
-  const password = validatePassword(payload.password)
-  const confirmPassword = validatePasswordConfirm(payload.password, payload.confirmPassword)
+  const name = validateName(payload.name, locale)
+  const email = validateEmail(payload.email, locale)
+  const password = validatePassword(payload.password, locale)
+  const confirmPassword = validatePasswordConfirm(payload.password, payload.confirmPassword, locale)
   if (name) errors.name = name
   if (email) errors.email = email
   if (password) errors.password = password
@@ -88,10 +90,10 @@ export function validateRegister(payload: RegisterPayload): FieldErrors<Register
   return errors
 }
 
-export function validateLogin(payload: LoginPayload): FieldErrors<LoginPayload> {
+export function validateLogin(payload: LoginPayload, locale: string = 'en'): FieldErrors<LoginPayload> {
   const errors: FieldErrors<LoginPayload> = {}
-  const email = validateEmail(payload.email)
-  const password = payload.password ? null : 'Password is required.'
+  const email = validateEmail(payload.email, locale)
+  const password = payload.password ? null : getMessage(locale, 'auth.validation.passwordRequired')
   if (email) errors.email = email
   if (password) errors.password = password
   return errors

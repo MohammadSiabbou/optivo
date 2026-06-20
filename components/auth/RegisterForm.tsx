@@ -12,12 +12,14 @@ import {
   type FieldErrors,
   type RegisterPayload,
 } from '@/lib/validation/client'
+import { getMessage } from '@/lib/i18n'
 import { InputField, FormError } from './FieldAtoms'
 import { LogoUploader } from './LogoUploader'
 import { Button } from '@/components/ui/button'
 
 export function RegisterForm() {
   const router = useRouter()
+  const locale = 'en'
 
   const [fields, setFields] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState<FieldErrors<RegisterPayload>>({})
@@ -31,10 +33,10 @@ export function RegisterForm() {
   const touch = (field: keyof RegisterPayload, value: string) => {
     setFields((f) => ({ ...f, [field]: value }))
     let err: string | null = null
-    if (field === 'name') err = validateName(value)
-    if (field === 'email') err = validateEmail(value)
-    if (field === 'password') err = validatePassword(value)
-    if (field === 'confirmPassword') err = validatePasswordConfirm(fields.password, value)
+    if (field === 'name') err = validateName(value, locale)
+    if (field === 'email') err = validateEmail(value, locale)
+    if (field === 'password') err = validatePassword(value, locale)
+    if (field === 'confirmPassword') err = validatePasswordConfirm(fields.password, value, locale)
     setErrors((e) => ({ ...e, [field]: err ?? undefined }))
   }
 
@@ -43,10 +45,10 @@ export function RegisterForm() {
     setFormError(null)
 
     // Full validation pass before sending
-    const nameErr = validateName(fields.name)
-    const emailErr = validateEmail(fields.email)
-    const passwordErr = validatePassword(fields.password)
-    const confirmErr = validatePasswordConfirm(fields.password, fields.confirmPassword)
+    const nameErr = validateName(fields.name, locale)
+    const emailErr = validateEmail(fields.email, locale)
+    const passwordErr = validatePassword(fields.password, locale)
+    const confirmErr = validatePasswordConfirm(fields.password, fields.confirmPassword, locale)
     const allErrors = {
       name: nameErr ?? undefined,
       email: emailErr ?? undefined,
@@ -65,12 +67,12 @@ export function RegisterForm() {
       })
       const json = await res.json()
       if (!res.ok) {
-        setFormError(json.error ?? 'Registration failed. Please try again.')
+        setFormError(json.error ?? getMessage(locale, 'auth.common.registrationFailed'))
         return
       }
       router.push('/dashboard')
     } catch {
-      setFormError('An unexpected error occurred. Please try again.')
+      setFormError(getMessage(locale, 'auth.common.unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -81,11 +83,11 @@ export function RegisterForm() {
       <FormError message={formError} />
 
       <InputField
-        label="Studio / business name"
+        label={getMessage(locale, 'auth.register.fieldErrors.name')}
         id="name"
         type="text"
         autoComplete="organization"
-        placeholder="Lumière Studio"
+        placeholder={getMessage(locale, 'auth.register.namePlaceholder')}
         required
         value={fields.name}
         onChange={(e) => touch('name', e.target.value)}
@@ -94,11 +96,11 @@ export function RegisterForm() {
       />
 
       <InputField
-        label="Email"
+        label={getMessage(locale, 'auth.register.fieldErrors.email')}
         id="email"
         type="email"
         autoComplete="email"
-        placeholder="hello@lumierestudio.com"
+        placeholder={getMessage(locale, 'auth.register.emailPlaceholder')}
         required
         value={fields.email}
         onChange={(e) => touch('email', e.target.value)}
@@ -109,14 +111,14 @@ export function RegisterForm() {
       {/* Password */}
       <div className="space-y-1.5">
         <label htmlFor="password" className="block text-sm font-medium text-foreground/80">
-          Password<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
+          {getMessage(locale, 'auth.register.fieldErrors.password')}<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
         </label>
         <div className="relative">
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
-            placeholder="Min. 8 characters with a number"
+            placeholder={getMessage(locale, 'auth.register.passwordPlaceholder')}
             required
             value={fields.password}
             onChange={(e) => touch('password', e.target.value)}
@@ -134,7 +136,7 @@ export function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? getMessage(locale, 'auth.common.hidePassword') : getMessage(locale, 'auth.common.showPassword')}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
           >
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -148,14 +150,14 @@ export function RegisterForm() {
       {/* Confirm password */}
       <div className="space-y-1.5">
         <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground/80">
-          Confirm password<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
+          {getMessage(locale, 'auth.register.fieldErrors.confirmPassword')}<span className="ml-0.5 text-destructive" aria-hidden="true">*</span>
         </label>
         <div className="relative">
           <input
             id="confirmPassword"
             type={showConfirm ? 'text' : 'password'}
             autoComplete="new-password"
-            placeholder="Repeat your password"
+            placeholder={getMessage(locale, 'auth.register.confirmPlaceholder')}
             required
             value={fields.confirmPassword}
             onChange={(e) => touch('confirmPassword', e.target.value)}
@@ -173,7 +175,7 @@ export function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowConfirm((v) => !v)}
-            aria-label={showConfirm ? 'Hide password confirmation' : 'Show password confirmation'}
+            aria-label={showConfirm ? getMessage(locale, 'auth.common.hidePasswordConfirm') : getMessage(locale, 'auth.common.showPasswordConfirm')}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
           >
             {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -184,23 +186,20 @@ export function RegisterForm() {
         )}
       </div>
 
-      <LogoUploader
-        onUploadComplete={(url) => setLogoUrl(url)}
-        onClear={() => setLogoUrl(null)}
-      />
+      <LogoUploader locale={locale} />
 
       <Button
         type="submit"
         disabled={loading}
         className="w-full h-11 text-sm font-semibold rounded-lg bg-[var(--auth-accent)] text-[var(--auth-accent-foreground)] hover:opacity-90 transition-opacity border-0"
       >
-        {loading ? 'Creating account…' : 'Create account'}
+        {loading ? getMessage(locale, 'auth.register.submitLoading') : getMessage(locale, 'auth.register.submitButton')}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{' '}
+        {getMessage(locale, 'auth.register.alreadyHaveAccount')}{' '}
         <Link href="/login" className="font-medium text-foreground hover:underline underline-offset-4 transition-colors">
-          Sign in
+          {getMessage(locale, 'auth.register.signInLink')}
         </Link>
       </p>
     </form>

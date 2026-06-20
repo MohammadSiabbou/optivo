@@ -3,8 +3,14 @@
  * Contains the Optivo wordmark and a short positioning line.
  */
 import Link from 'next/link'
+import { getMessage } from '@/lib/i18n'
 
 export function AuthBrandPanel() {
+  const locale = 'en'
+  const tagline = getMessage(locale, 'auth.brand.tagline')
+  const subtitle = getMessage(locale, 'auth.brand.subtitle')
+  const copyright = getMessage(locale, 'auth.brand.copyright', { year: new Date().getFullYear() })
+
   return (
     <aside
       aria-hidden="true"
@@ -18,18 +24,21 @@ export function AuthBrandPanel() {
       {/* Centre copy */}
       <div className="space-y-4">
         <p className="text-4xl font-semibold leading-tight tracking-tight text-balance">
-          Every shoot,<br />
-          every client,<br />
-          in one place.
+          {tagline.split(',').map((line, i) => (
+            <span key={i}>
+              {line.trim()}
+              {i < tagline.split(',').length - 1 && <br />}
+            </span>
+          ))}
         </p>
         <p className="text-sm leading-relaxed text-background/50 max-w-xs">
-          Manage shoots, deliver protected galleries, and build the client experience your work deserves.
+          {subtitle}
         </p>
       </div>
 
       {/* Footer */}
       <p className="text-xs text-background/30">
-        &copy; {new Date().getFullYear()} Optivo
+        {copyright}
       </p>
     </aside>
   )
