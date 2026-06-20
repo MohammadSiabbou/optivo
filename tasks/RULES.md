@@ -11,6 +11,7 @@ it will give them the ability to:
 ## Architecture
 - This project is OOP.
 - We will use Aurora PostgreSQL aws for the DB client
+- You can use a package that helps with db migrations and query building
 - We will have Ports which are interfaces later to be implemented, this includes stuff like services, repositories..
 - the DB connection logic should be in a DBClient class:
  implements a IDBClient interface, which contains the basic typesafe methods , insert, update, delete, list, find -> returns a single column based on the filters, and an excute function which excutes the query as is (with sql-injection safety), only used when really needed and none of the others could serve that usecase
