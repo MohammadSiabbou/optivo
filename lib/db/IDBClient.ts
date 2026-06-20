@@ -20,7 +20,7 @@ export type FilterMap<T> = Partial<{ [K in keyof T]: T[K] }>
  */
 export interface IDBClient<DB> {
   /**
-   * Expose the underlying Kysely instance for use-cases that need to build
+   * Expose the underlying Kysely instance for services that need to build
    * complex queries themselves before handing them back to `execute`.
    */
   readonly kysely: Kysely<DB>
