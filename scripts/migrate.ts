@@ -1,24 +1,18 @@
 /**
  * Umzug-based migration runner.
  * Executes all .sql files from lib/db/migrations in order, tracking execution state.
- * 
- * Authentication modes:
- * - AWS IAM (Vercel): Uses VERCEL_OIDC_TOKEN + AWS_ROLE_ARN (automatic in Vercel deployments)
- * - Direct password: Uses PGPASSWORD env var (for local development with direct DB access)
  *
- * Usage:
- * 
- * In Vercel preview deployments (automatic):
- *   ✓ Runs via deployment hooks with AWS IAM credentials
- * 
- * Locally with direct DB access:
- *   1. Set PGPASSWORD in your .env file with your actual DB password
- *   2. Run: node --env-file-if-exists=.env.development.local -r tsx/esm scripts/migrate.ts
+ * Authentication:
+ * - In Vercel deployments (VERCEL=1): AWS IAM via OIDC token (automatic, no config needed)
+ * - Locally: Set PGPASSWORD in .env.development.local for direct password auth
+ *   Note: Aurora PostgreSQL requires IAM auth by default. To use PGPASSWORD locally,
+ *   the DB cluster must have password auth enabled for the user.
  *
- * Notes:
- * - The umzug_migrations table tracks which migrations have been executed
- * - Migrations are idempotent and only run once
- * - SQL files in lib/db/migrations/ are executed in alphabetical order
+ * Run:
+ *   node --env-file-if-exists=.env.development.local -r tsx/esm scripts/migrate.ts
+ *
+ * Umzug tracks executed migrations in the `umzug_migrations` table so each .sql
+ * file under lib/db/migrations/ is only ever run once, in alphabetical order.
  */
 import fs from 'fs'
 import path from 'path'
@@ -34,10 +28,9 @@ async function createPool(): Promise<Pool> {
     throw new Error('PGHOST environment variable is not set')
   }
 
-  // Prefer direct password auth if PGPASSWORD is set (local development)
-  // Otherwise use AWS IAM (Vercel deployments only)
-  const useDirectAuth = !!process.env.PGPASSWORD
-  const isVercel = !useDirectAuth && process.env.AWS_ROLE_ARN && process.env.AWS_REGION
+  // Use AWS IAM only when running inside an actual Vercel deployment.
+  // VERCEL=1 is injected by the Vercel runtime; it is never present locally.
+  const isVercel = process.env.VERCEL === '1'
 
   if (isVercel) {
     console.log('[migrate] Using AWS IAM authentication...')
@@ -144,11 +137,13 @@ async function main() {
     console.error('[migrate] Error:', err.message || err)
     
     // Helpful guidance for common errors
-    if (err.code === '28P01' || err.message?.includes('authentication')) {
-      console.error('\n[migrate] 💡 Authentication failed. For local development:')
-      console.error('   1. Remove PGPASSWORD from .env.development.local')
-      console.error('   2. Ensure VERCEL_OIDC_TOKEN is available in your environment')
-      console.error('   3. The sandbox VM provides AWS IAM credentials automatically\n')
+    if (err.code === '28P01' || err.message?.includes('authentication') || err.message?.includes('PAM')) {
+      console.error('\n[migrate] Authentication failed.')
+      if (process.env.VERCEL !== '1') {
+        console.error('   Aurora PostgreSQL uses IAM auth by default. To run migrations locally,')
+        console.error('   either deploy to Vercel (where IAM auth works automatically),')
+        console.error('   or set PGPASSWORD in .env.development.local if your cluster allows password auth.\n')
+      }
     }
     
     if (err.code === 'ECONNREFUSED') {
