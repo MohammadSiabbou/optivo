@@ -1,4 +1,12 @@
 {
+  "nav": {
+    "userMenuAriaLabel": "Open user menu",
+    "settings": "Settings",
+    "logout": "Log out",
+    "logoAlt": "{name} logo",
+    "dashboard": "Dashboard",
+    "sidebarLabel": "Main navigation"
+  },
   "auth": {
     "brand": {
       "tagline": "Every shoot, every client, in one place.",

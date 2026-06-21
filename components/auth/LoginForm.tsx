@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { validateEmail } from '@/modules/clients/validation'
 import { getMessage } from '@/lib/i18n'
+import { ROUTES } from '@/lib/routes'
 import { InputField, FormError } from './FieldAtoms'
 import { Button } from '@/components/ui/button'
 
@@ -43,7 +44,7 @@ export function LoginForm() {
         setFormError(json.error ?? getMessage(locale, 'auth.login.invalidCredentials'))
         return
       }
-      router.push('/dashboard')
+      router.push(ROUTES.dashboard)
     } catch {
       setFormError(getMessage(locale, 'auth.common.unexpectedError'))
     } finally {
