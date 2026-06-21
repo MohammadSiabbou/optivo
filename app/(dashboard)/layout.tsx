@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { AppHeader } from '@/components/layout/AppHeader'
+import { AppSidebar } from '@/components/layout/AppSidebar'
 
 export const metadata: Metadata = {
   title: 'Dashboard — Optivo',
@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <AppHeader />
-      <main className="flex flex-1 flex-col">{children}</main>
+    <div className="flex h-screen overflow-hidden bg-background">
+      <AppSidebar />
+      <main className="flex flex-1 flex-col overflow-y-auto">{children}</main>
     </div>
   )
 }

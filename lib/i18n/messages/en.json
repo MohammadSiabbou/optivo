@@ -3,7 +3,9 @@
     "userMenuAriaLabel": "Open user menu",
     "settings": "Settings",
     "logout": "Log out",
-    "logoAlt": "{name} logo"
+    "logoAlt": "{name} logo",
+    "dashboard": "Dashboard",
+    "sidebarLabel": "Main navigation"
   },
   "auth": {
     "brand": {
