@@ -14,6 +14,11 @@ function makeRow(overrides: Partial<ClientRow> = {}): ClientRow {
     email: 'test@example.com',
     password: 'hashed',
     logo_url: null,
+    instagram_url: null,
+    facebook_url: null,
+    linkedin_url: null,
+    twitter_url: null,
+    onboarding_completed_at: null,
     created_at: new Date(),
     updated_at: new Date(),
     ...overrides,
@@ -86,6 +91,11 @@ describe('ClientRepository', () => {
         email: data.email,
         password: data.password,
         logo_url: data.logo_url,
+        instagram_url: null,
+        facebook_url: null,
+        linkedin_url: null,
+        twitter_url: null,
+        onboarding_completed_at: null,
       })
     })
 
