@@ -8,7 +8,7 @@ import {
   validateRegister,
   validateLogin,
   LOGO_PREFERRED,
-} from '../client'
+} from '@/modules/clients/validation'
 
 // ---------------------------------------------------------------------------
 // validateName

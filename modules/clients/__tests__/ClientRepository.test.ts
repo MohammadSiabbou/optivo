@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ClientRepository } from '../ClientRepository'
+import { ClientRepository } from '@/modules/clients/repositories/ClientRepository'
 import type { IDBClient } from '@/lib/db/IDBClient'
 import type { Database, ClientRow } from '@/lib/db/schema'
 

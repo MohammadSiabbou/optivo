@@ -4,9 +4,9 @@
  * Validates the payload, checks for duplicate email, hashes the password,
  * and persists the new client row.  Returns a safe (no password) client DTO.
  */
-import { validateRegister, type RegisterPayload } from '@/lib/validation/client'
-import type { IClientRepository } from '../IClientRepository'
-import type { ClientAuthService } from '../ClientAuthService'
+import { validateRegister, type RegisterPayload } from '@/modules/clients/validation'
+import type { IClientRepository } from '@/modules/clients/repositories/IClientRepository'
+import type { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
 import type { ClientRow } from '@/lib/db/schema'
 
 export type SafeClient = Omit<ClientRow, 'password'>

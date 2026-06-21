@@ -1,0 +1,6 @@
+export type { IClientRepository } from '@/modules/clients/repositories/IClientRepository'
+export { ClientRepository } from '@/modules/clients/repositories/ClientRepository'
+export { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
+export { RegisterClientUseCase } from '@/modules/clients/usecases/RegisterClientUseCase'
+export { LoginClientUseCase } from '@/modules/clients/usecases/LoginClientUseCase'
+export type { SafeClient, RegisterClientInput } from '@/modules/clients/usecases/RegisterClientUseCase'

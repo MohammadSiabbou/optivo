@@ -7,7 +7,7 @@
  */
 import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
-import { LOGO_MAX_BYTES } from '@/lib/validation/client'
+import { LOGO_MAX_BYTES } from '@/modules/clients/validation'
 
 export async function POST(request: Request) {
   try {

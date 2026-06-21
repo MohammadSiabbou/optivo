@@ -5,10 +5,10 @@
  * and returns the safe client DTO.  The JWT is signed in the API route layer
  * so this use case stays transport-agnostic.
  */
-import { validateLogin, type LoginPayload } from '@/lib/validation/client'
-import type { IClientRepository } from '../IClientRepository'
-import type { ClientAuthService } from '../ClientAuthService'
-import type { SafeClient } from './RegisterClientUseCase'
+import { validateLogin, type LoginPayload } from '@/modules/clients/validation'
+import type { IClientRepository } from '@/modules/clients/repositories/IClientRepository'
+import type { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
+import type { SafeClient } from '@/modules/clients/usecases/RegisterClientUseCase'
 import type { ClientRow } from '@/lib/db/schema'
 
 export class LoginClientUseCase {

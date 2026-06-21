@@ -10,7 +10,7 @@ it will give them the ability to:
 
 ## Architecture
 - This project is OOP.
-- each feature will be its own folder with subfolders for validation, usecases, services, repositories, in services and repositories each one will have the port (interface file) and the implementation class
+- each feature will be its own folder with subfolders inside modules/ for validation, usecases, services, repositories, in services and repositories each one will have the port (interface file) and the implementation class
 - We will use Aurora PostgreSQL aws for the DB client
 - You can use a package that helps with db migrations and query building
 - We will have Ports which are interfaces later to be implemented, this includes stuff like services, repositories..
@@ -25,3 +25,4 @@ it will give them the ability to:
 - never commit unless asked to
 - always write tests for your code, with as much coverage as we can. use vitest
 - never write user side strings as static, we need i18n support here, for now we will have just english but we might add new languages later so dont use static strings
+- dont repeat code, always look for a function before adding it, if a function close to it exists base on it or edit it if its easier

@@ -3,7 +3,7 @@
  */
 import type { IDBClient } from '@/lib/db/IDBClient'
 import type { Database, ClientRow } from '@/lib/db/schema'
-import type { IClientRepository } from './IClientRepository'
+import type { IClientRepository } from '@/modules/clients/repositories/IClientRepository'
 
 export class ClientRepository implements IClientRepository {
   constructor(private readonly db: IDBClient<Database>) {}

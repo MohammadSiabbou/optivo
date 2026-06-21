@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { RegisterClientUseCase } from '../usecases/RegisterClientUseCase'
-import { LoginClientUseCase } from '../usecases/LoginClientUseCase'
-import type { IClientRepository } from '../IClientRepository'
-import type { ClientAuthService } from '../ClientAuthService'
+import { RegisterClientUseCase } from '@/modules/clients/usecases/RegisterClientUseCase'
+import { LoginClientUseCase } from '@/modules/clients/usecases/LoginClientUseCase'
+import type { IClientRepository } from '@/modules/clients/repositories/IClientRepository'
+import type { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
 import type { ClientRow } from '@/lib/db/schema'
 
 // ---------------------------------------------------------------------------

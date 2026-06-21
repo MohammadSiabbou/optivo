@@ -5,10 +5,10 @@
 import { DBClient } from '@/lib/db/DBClient'
 import { pool } from '@/lib/db/pool'
 import type { Database } from '@/lib/db/schema'
-import { ClientRepository } from './ClientRepository'
-import { ClientAuthService } from './ClientAuthService'
-import { RegisterClientUseCase } from './usecases/RegisterClientUseCase'
-import { LoginClientUseCase } from './usecases/LoginClientUseCase'
+import { ClientRepository } from '@/modules/clients/repositories/ClientRepository'
+import { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
+import { RegisterClientUseCase } from '@/modules/clients/usecases/RegisterClientUseCase'
+import { LoginClientUseCase } from '@/modules/clients/usecases/LoginClientUseCase'
 
 export function buildClientDeps() {
   const db = new DBClient<Database>(pool)

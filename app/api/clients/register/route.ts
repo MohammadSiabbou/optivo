@@ -5,7 +5,7 @@
  * On success: sets httpOnly JWT cookie and returns the safe client DTO.
  */
 import { NextResponse } from 'next/server'
-import { buildClientDeps } from '@/lib/clients/factory'
+import { buildClientDeps } from '@/modules/clients/factory'
 import { signToken, makeSetCookieValue, TOKEN_COOKIE } from '@/lib/auth/jwt'
 
 export async function POST(request: Request) {
