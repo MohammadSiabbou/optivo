@@ -10,7 +10,7 @@
 import { useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Upload, X, ImageIcon } from 'lucide-react'
-import { LOGO_MAX_BYTES, LOGO_PREFERRED, logoSizeWarning } from '@/lib/validation/client'
+import { LOGO_MAX_BYTES, LOGO_PREFERRED, logoSizeWarning } from '@/modules/clients/validation'
 import { getMessage } from '@/lib/i18n'
 import { FieldError, FieldWarning } from './FieldAtoms'
 import { cn } from '@/lib/utils'

@@ -1,11 +1,23 @@
 /**
  * Umzug migration configuration for Aurora PostgreSQL with raw pg driver.
- * Reads .sql migration files from lib/db/migrations/ in order.
+ *
+ * Migrations are registered with static imports so Next.js can analyse them
+ * at build time. Add every new migration file to the MIGRATIONS array below.
  */
-import fs from 'fs'
-import path from 'path'
 import { Umzug, UmzugStorage } from 'umzug'
 import { pool } from './pool'
+import * as migration001 from './migrations/001_create_clients_table.js'
+
+// ---------------------------------------------------------------------------
+// Registry — add each new migration here in order
+// ---------------------------------------------------------------------------
+const MIGRATIONS: Array<{
+  name: string
+  up: (ctx: { context: any }) => Promise<void>
+  down: (ctx: { context: any }) => Promise<void>
+}> = [
+  { name: '001_create_clients_table', ...migration001 },
+]
 
 /**
  * Custom storage for tracking migrations in the database.
@@ -59,34 +71,27 @@ class PgStorage implements UmzugStorage {
 }
 
 export const umzug = new Umzug({
-  migrations: {
-    glob: 'lib/db/migrations/*.js',
-    resolve: async ({ name, path: filePath }) => {
-      const module = await import(`file://${path.resolve(filePath!)}`)
-      
-      return {
-        name,
-        up: async () => {
-          const client = await pool.connect()
-          try {
-            await module.up({ context: client })
-            console.log(`[migrate] ✓ Executed: ${name}`)
-          } finally {
-            client.release()
-          }
-        },
-        down: async () => {
-          const client = await pool.connect()
-          try {
-            await module.down({ context: client })
-            console.log(`[migrate] ✓ Reverted: ${name}`)
-          } finally {
-            client.release()
-          }
-        },
+  migrations: MIGRATIONS.map((m) => ({
+    name: m.name,
+    up: async () => {
+      const client = await pool.connect()
+      try {
+        await m.up({ context: client })
+        console.log(`[migrate] ✓ Executed: ${m.name}`)
+      } finally {
+        client.release()
       }
     },
-  },
+    down: async () => {
+      const client = await pool.connect()
+      try {
+        await m.down({ context: client })
+        console.log(`[migrate] ✓ Reverted: ${m.name}`)
+      } finally {
+        client.release()
+      }
+    },
+  })),
   storage: new PgStorage(),
   logger: console,
 })

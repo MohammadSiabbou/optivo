@@ -11,7 +11,7 @@ import {
   validatePasswordConfirm,
   type FieldErrors,
   type RegisterPayload,
-} from '@/lib/validation/client'
+} from '@/modules/clients/validation'
 import { getMessage } from '@/lib/i18n'
 import { InputField, FormError } from './FieldAtoms'
 import { LogoUploader } from './LogoUploader'

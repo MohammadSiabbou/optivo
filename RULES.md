@@ -19,6 +19,7 @@ it will give them the ability to:
 - Each table should have a service class which will have the DB client injected in it and use it to do data fetching/manipulation
 - We will usecases here, each task (eg save order) should be a usecase, usecases are classes with one function ->excute(takes the payload here), they only use Ports 
 - the validation logic should be defined in a single place rather than sperate frontend/backend, that validation logic will be used in the frontend for a reactive and user friendly and in the backend (use cases) to run validation again for those payloads
+ the tests should be defined with each module with the folder name tests/ and it should mirror the structure of the folders of the file being tested, for example a test for clients/services/clientsService.ts should be in tests/services/clientsService.test.ts
 
 ## Rules
 - never make architecture decisions for yourself, always ask the user, we need to keep the architecture clean.
