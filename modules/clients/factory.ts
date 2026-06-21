@@ -12,6 +12,7 @@ import { LoginClientUseCase } from '@/modules/clients/usecases/LoginClientUseCas
 import { UpdateProfileUseCase } from '@/modules/clients/usecases/UpdateProfileUseCase'
 import { UpdateSocialsUseCase } from '@/modules/clients/usecases/UpdateSocialsUseCase'
 import { ChangePasswordUseCase } from '@/modules/clients/usecases/ChangePasswordUseCase'
+import { CompleteOnboardingUseCase } from '@/modules/clients/usecases/CompleteOnboardingUseCase'
 
 export function buildClientDeps() {
   const db = new DBClient<Database>(pool)
@@ -23,5 +24,6 @@ export function buildClientDeps() {
     updateProfileUseCase: new UpdateProfileUseCase(repo),
     updateSocialsUseCase: new UpdateSocialsUseCase(repo),
     changePasswordUseCase: new ChangePasswordUseCase(repo, authService),
+    completeOnboardingUseCase: new CompleteOnboardingUseCase(repo),
   }
 }

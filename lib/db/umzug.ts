@@ -7,6 +7,11 @@
 import { Umzug, UmzugStorage } from 'umzug'
 import { pool } from './pool'
 import * as migration001 from './migrations/001_create_clients_table.js'
+import * as migration002 from './migrations/002_add_social_columns.js'
+import * as migration003 from './migrations/003_add_onboarding_completed_at.js'
+import * as migration004 from './migrations/004_create_service_tables.js'
+import * as migration005 from './migrations/005_create_packs_table.js'
+import * as migration006 from './migrations/006_seed_default_services.js'
 
 // ---------------------------------------------------------------------------
 // Registry — add each new migration here in order
@@ -17,6 +22,11 @@ const MIGRATIONS: Array<{
   down: (ctx: { context: any }) => Promise<void>
 }> = [
   { name: '001_create_clients_table', ...migration001 },
+  { name: '002_add_social_columns', ...migration002 },
+  { name: '003_add_onboarding_completed_at', ...migration003 },
+  { name: '004_create_service_tables', ...migration004 },
+  { name: '005_create_packs_table', ...migration005 },
+  { name: '006_seed_default_services', ...migration006 },
 ]
 
 /**
