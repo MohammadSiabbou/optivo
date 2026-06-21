@@ -5,7 +5,7 @@
  * Allows the client to save links to their social profiles.
  */
 import { useState } from 'react'
-import { Instagram, Facebook, Linkedin, Twitter, CheckCircle2 } from 'lucide-react'
+import { Instagram, Facebook, Linkedin, X, CheckCircle2 } from 'lucide-react'
 import { InputField, FormError } from '@/components/auth/FieldAtoms'
 import { getMessage } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
@@ -46,7 +46,7 @@ const SOCIAL_FIELDS: SocialField[] = [
   {
     key: 'twitter_url',
     labelKey: 'settings.profile.socials.twitterLabel',
-    icon: <Twitter className="size-4 text-muted-foreground" aria-hidden="true" />,
+    icon: <X className="size-4 text-muted-foreground" aria-hidden="true" />,
     placeholder: 'https://x.com/yourstudio',
   },
 ]
