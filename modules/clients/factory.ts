@@ -9,6 +9,9 @@ import { ClientRepository } from '@/modules/clients/repositories/ClientRepositor
 import { ClientAuthService } from '@/modules/clients/services/ClientAuthService'
 import { RegisterClientUseCase } from '@/modules/clients/usecases/RegisterClientUseCase'
 import { LoginClientUseCase } from '@/modules/clients/usecases/LoginClientUseCase'
+import { UpdateProfileUseCase } from '@/modules/clients/usecases/UpdateProfileUseCase'
+import { UpdateSocialsUseCase } from '@/modules/clients/usecases/UpdateSocialsUseCase'
+import { ChangePasswordUseCase } from '@/modules/clients/usecases/ChangePasswordUseCase'
 
 export function buildClientDeps() {
   const db = new DBClient<Database>(pool)
@@ -17,5 +20,8 @@ export function buildClientDeps() {
   return {
     registerUseCase: new RegisterClientUseCase(repo, authService),
     loginUseCase: new LoginClientUseCase(repo, authService),
+    updateProfileUseCase: new UpdateProfileUseCase(repo),
+    updateSocialsUseCase: new UpdateSocialsUseCase(repo),
+    changePasswordUseCase: new ChangePasswordUseCase(repo, authService),
   }
 }

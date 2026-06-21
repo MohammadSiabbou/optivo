@@ -22,6 +22,9 @@ export const ROUTES = {
       register: '/api/clients/register',
       logout: '/api/clients/logout',
       uploadLogo: '/api/clients/upload-logo',
+      updateProfile: '/api/clients/profile',
+      updateSocials: '/api/clients/socials',
+      changeSecurity: '/api/clients/security',
     },
   },
 } as const

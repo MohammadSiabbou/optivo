@@ -7,6 +7,50 @@
     "dashboard": "Dashboard",
     "sidebarLabel": "Main navigation"
   },
+  "settings": {
+    "pageTitle": "Settings",
+    "tabs": {
+      "profile": "Profile"
+    },
+    "profile": {
+      "basicInfo": {
+        "title": "Basic Info",
+        "description": "Update your studio name and logo.",
+        "nameLabel": "Studio Name",
+        "logoLabel": "Studio Logo",
+        "saveButton": "Save changes",
+        "saving": "Saving\u2026",
+        "savedSuccess": "Changes saved."
+      },
+      "socials": {
+        "title": "Social Media",
+        "description": "Add links to your social media profiles.",
+        "instagramLabel": "Instagram",
+        "facebookLabel": "Facebook",
+        "linkedinLabel": "LinkedIn",
+        "twitterLabel": "Twitter / X",
+        "saveButton": "Save links",
+        "saving": "Saving\u2026",
+        "savedSuccess": "Links saved."
+      },
+      "security": {
+        "title": "Security",
+        "description": "Change your account password.",
+        "currentPasswordLabel": "Current password",
+        "newPasswordLabel": "New password",
+        "confirmPasswordLabel": "Confirm new password",
+        "saveButton": "Update password",
+        "saving": "Updating\u2026",
+        "savedSuccess": "Password updated.",
+        "wrongCurrentPassword": "Current password is incorrect."
+      }
+    },
+    "validation": {
+      "urlInvalid": "Please enter a valid URL (https://\u2026).",
+      "currentPasswordRequired": "Current password is required.",
+      "newPasswordSameAsCurrent": "New password must differ from the current one."
+    }
+  },
   "auth": {
     "brand": {
       "tagline": "Every shoot, every client, in one place.",
