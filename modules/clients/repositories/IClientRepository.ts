@@ -13,4 +13,8 @@ export interface IClientRepository {
     password: string
     logo_url?: string | null
   }): Promise<ClientRow>
+  update(
+    id: string,
+    data: Partial<Omit<ClientRow, 'id' | 'email' | 'created_at'>>,
+  ): Promise<ClientRow>
 }

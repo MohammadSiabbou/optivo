@@ -29,4 +29,16 @@ export class ClientRepository implements IClientRepository {
       logo_url: data.logo_url ?? null,
     })
   }
+
+  async update(
+    id: string,
+    data: Partial<Omit<ClientRow, 'id' | 'email' | 'created_at'>>,
+  ): Promise<ClientRow> {
+    const rows = await this.db.update('clients', { id }, {
+      ...data,
+      updated_at: new Date(),
+    })
+    if (!rows[0]) throw new Error('Client not found.')
+    return rows[0]
+  }
 }

@@ -98,3 +98,70 @@ export function validateLogin(payload: LoginPayload, locale: string = 'en'): Fie
   if (password) errors.password = password
   return errors
 }
+
+// ---------------------------------------------------------------------------
+// Settings payloads
+// ---------------------------------------------------------------------------
+
+export interface UpdateProfilePayload {
+  name: string
+  logo_url?: string | null
+}
+
+export interface UpdateSocialsPayload {
+  instagram_url?: string
+  facebook_url?: string
+  linkedin_url?: string
+  twitter_url?: string
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string
+  newPassword: string
+  confirmNewPassword: string
+}
+
+function validateUrl(raw: string | undefined, locale: string): string | null {
+  if (!raw || raw.trim() === '') return null // empty / absent is fine
+  try {
+    const parsed = new URL(raw.trim())
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return getMessage(locale, 'settings.validation.urlInvalid')
+    }
+  } catch {
+    return getMessage(locale, 'settings.validation.urlInvalid')
+  }
+  return null
+}
+
+export function validateUpdateProfile(payload: UpdateProfilePayload, locale: string = 'en'): FieldErrors<UpdateProfilePayload> {
+  const errors: FieldErrors<UpdateProfilePayload> = {}
+  const name = validateName(payload.name, locale)
+  if (name) errors.name = name
+  return errors
+}
+
+export function validateUpdateSocials(payload: UpdateSocialsPayload, locale: string = 'en'): FieldErrors<UpdateSocialsPayload> {
+  const errors: FieldErrors<UpdateSocialsPayload> = {}
+  const instagram = validateUrl(payload.instagram_url, locale)
+  const facebook = validateUrl(payload.facebook_url, locale)
+  const linkedin = validateUrl(payload.linkedin_url, locale)
+  const twitter = validateUrl(payload.twitter_url, locale)
+  if (instagram) errors.instagram_url = instagram
+  if (facebook) errors.facebook_url = facebook
+  if (linkedin) errors.linkedin_url = linkedin
+  if (twitter) errors.twitter_url = twitter
+  return errors
+}
+
+export function validateChangePassword(payload: ChangePasswordPayload, locale: string = 'en'): FieldErrors<ChangePasswordPayload> {
+  const errors: FieldErrors<ChangePasswordPayload> = {}
+  if (!payload.currentPassword) {
+    errors.currentPassword = getMessage(locale, 'settings.validation.currentPasswordRequired')
+  }
+  const newPw = validatePassword(payload.newPassword, locale)
+  if (newPw) errors.newPassword = newPw
+  const confirm = validatePasswordConfirm(payload.newPassword, payload.confirmNewPassword, locale)
+  if (confirm) errors.confirmNewPassword = confirm
+  return errors
+}
