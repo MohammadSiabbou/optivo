@@ -60,22 +60,29 @@ class PgStorage implements UmzugStorage {
 
 export const umzug = new Umzug({
   migrations: {
-    glob: 'lib/db/migrations/*.sql',
-    resolve: ({ name, path: filePath }) => {
+    glob: 'lib/db/migrations/*.js',
+    resolve: async ({ name, path: filePath }) => {
+      const module = await import(`file://${path.resolve(filePath!)}`)
+      
       return {
         name,
         up: async () => {
           const client = await pool.connect()
           try {
-            const sql = fs.readFileSync(filePath!, 'utf-8')
-            await client.query(sql)
+            await module.up({ context: client })
             console.log(`[migrate] ✓ Executed: ${name}`)
           } finally {
             client.release()
           }
         },
         down: async () => {
-          console.log(`[migrate] Skipping down migration for ${name}`)
+          const client = await pool.connect()
+          try {
+            await module.down({ context: client })
+            console.log(`[migrate] ✓ Reverted: ${name}`)
+          } finally {
+            client.release()
+          }
         },
       }
     },
