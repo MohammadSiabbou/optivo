@@ -28,9 +28,20 @@ interface ImageUploaderProps {
   /** aria-label for the drop-zone button. */
   ariaLabel?: string
   locale?: string
+  /**
+   * When false (default) — single-file mode: show a preview after upload.
+   * When true — multi-file mode: the drop zone stays visible and each uploaded
+   * URL is delivered individually via onUploadComplete.
+   */
+  multiple?: boolean
+  /**
+   * Maximum number of files the user may still add (multi mode only).
+   * When reached the input is disabled and the hint changes.
+   */
+  maxFiles?: number
   onUploadComplete?: (url: string) => void
   onClear?: () => void
-  /** If provided, show as the current image instead of the drop zone. */
+  /** If provided, show as the current image instead of the drop zone (single mode only). */
   currentUrl?: string | null
   className?: string
 }
@@ -41,22 +52,28 @@ export function ImageUploader({
   label,
   ariaLabel,
   locale = 'en',
+  multiple = false,
+  maxFiles,
   onUploadComplete,
   onClear,
   currentUrl,
   className,
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  // Single-mode only state
   const [preview, setPreview] = useState<string | null>(currentUrl ?? null)
   const [fileName, setFileName] = useState<string | null>(null)
+  // Shared state
   const [uploading, setUploading] = useState(false)
+  const [uploadCount, setUploadCount] = useState(0) // multi-mode: in-progress uploads
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  const processFile = useCallback(
-    async (file: File) => {
-      setError(null)
+  const atLimit = multiple && maxFiles !== undefined && maxFiles <= 0
 
+  // Upload a single file and fire onUploadComplete with the returned URL.
+  const uploadOne = useCallback(
+    async (file: File): Promise<void> => {
       if (file.size > MAX_BYTES) {
         setError(
           getMessage(locale, 'auth.validation.fileTooLarge', {
@@ -66,40 +83,70 @@ export function ImageUploader({
         return
       }
 
-      const objectUrl = URL.createObjectURL(file)
-      setPreview(objectUrl)
-      setFileName(file.name)
-      setUploading(true)
-
-      try {
-        const fd = new FormData()
-        fd.append('file', file)
-        const res = await fetch(uploadUrl, { method: 'POST', body: fd })
-        const json = await res.json()
-        if (!res.ok) {
-          setError(json.error ?? getMessage(locale, 'auth.common.uploadFailed'))
+      if (!multiple) {
+        // Single mode: show local preview immediately
+        const objectUrl = URL.createObjectURL(file)
+        setPreview(objectUrl)
+        setFileName(file.name)
+        setUploading(true)
+        try {
+          const fd = new FormData()
+          fd.append('file', file)
+          const res = await fetch(uploadUrl, { method: 'POST', body: fd })
+          const json = await res.json()
+          if (!res.ok) {
+            setError(json.error ?? getMessage(locale, 'auth.common.uploadFailed'))
+            setPreview(null)
+            setFileName(null)
+            URL.revokeObjectURL(objectUrl)
+            return
+          }
+          onUploadComplete?.(json.url)
+          URL.revokeObjectURL(objectUrl)
+        } catch {
+          setError(getMessage(locale, 'auth.common.uploadFailed'))
           setPreview(null)
           setFileName(null)
-          URL.revokeObjectURL(objectUrl)
-          return
+        } finally {
+          setUploading(false)
         }
-        onUploadComplete?.(json.url)
-        URL.revokeObjectURL(objectUrl)
-      } catch {
-        setError(getMessage(locale, 'auth.common.uploadFailed'))
-        setPreview(null)
-        setFileName(null)
-        URL.revokeObjectURL(objectUrl)
-      } finally {
-        setUploading(false)
+      } else {
+        // Multi mode: upload in background, drop zone stays visible
+        setUploadCount((c) => c + 1)
+        setError(null)
+        try {
+          const fd = new FormData()
+          fd.append('file', file)
+          const res = await fetch(uploadUrl, { method: 'POST', body: fd })
+          const json = await res.json()
+          if (!res.ok) {
+            setError(json.error ?? getMessage(locale, 'auth.common.uploadFailed'))
+            return
+          }
+          onUploadComplete?.(json.url)
+        } catch {
+          setError(getMessage(locale, 'auth.common.uploadFailed'))
+        } finally {
+          setUploadCount((c) => c - 1)
+        }
       }
     },
-    [uploadUrl, locale, onUploadComplete],
+    [uploadUrl, locale, multiple, onUploadComplete],
   )
 
   function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return
-    processFile(files[0])
+    setError(null)
+    if (multiple) {
+      // Respect remaining slot count
+      const slots = maxFiles !== undefined ? Math.min(files.length, maxFiles) : files.length
+      const batch = Array.from(files).slice(0, slots)
+      batch.forEach((f) => uploadOne(f))
+      // Reset so the same selection can be re-opened
+      if (inputRef.current) inputRef.current.value = ''
+    } else {
+      uploadOne(files[0])
+    }
   }
 
   function handleClear() {
@@ -110,13 +157,16 @@ export function ImageUploader({
     onClear?.()
   }
 
+  const isUploading = multiple ? uploadCount > 0 : uploading
+
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
         <p className="text-sm font-medium text-foreground/80">{label}</p>
       )}
 
-      {preview ? (
+      {/* Single mode: show preview once a file is selected */}
+      {!multiple && preview ? (
         <div className="relative flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
           <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded">
             <Image
@@ -131,13 +181,13 @@ export function ImageUploader({
             {fileName && (
               <p className="truncate text-xs font-medium text-foreground">{fileName}</p>
             )}
-            {uploading && (
+            {isUploading && (
               <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
                 {getMessage(locale, 'auth.common.uploading')}
               </p>
             )}
-            {!uploading && !error && (
+            {!isUploading && !error && (
               <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">
                 {getMessage(locale, 'auth.common.uploaded')}
               </p>
@@ -153,37 +203,54 @@ export function ImageUploader({
           </button>
         </div>
       ) : (
+        /* Drop zone — always shown in multi mode, shown until preview in single mode */
         <button
           type="button"
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+          onClick={() => !atLimit && inputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); if (!atLimit) setIsDragging(true) }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={(e) => {
             e.preventDefault()
             setIsDragging(false)
-            handleFiles(e.dataTransfer.files)
+            if (!atLimit) handleFiles(e.dataTransfer.files)
           }}
-          disabled={uploading}
+          disabled={isUploading || atLimit}
           aria-label={ariaLabel ?? getMessage(locale, 'auth.common.uploadLogo')}
           className={cn(
             'flex w-full flex-col items-center gap-2 rounded-lg border-2 border-dashed px-6 py-8 transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
-            isDragging
+            atLimit
+              ? 'cursor-not-allowed border-border bg-muted/10 opacity-50'
+              : isDragging
               ? 'border-ring bg-muted/50'
               : 'border-border bg-muted/20 hover:border-ring/60 hover:bg-muted/30',
           )}
         >
-          {uploading ? (
-            <Loader2 className="h-7 w-7 animate-spin text-muted-foreground" />
+          {isUploading ? (
+            <>
+              <Loader2 className="h-7 w-7 animate-spin text-muted-foreground" />
+              {multiple && uploadCount > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {`Uploading ${uploadCount} image${uploadCount > 1 ? 's' : ''}…`}
+                </span>
+              )}
+            </>
           ) : (
-            <ImageIcon className="h-7 w-7 text-muted-foreground" />
+            <>
+              <ImageIcon className="h-7 w-7 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground/70">
+                  {getMessage(locale, 'auth.common.clickUpload')}
+                </span>{' '}
+                {getMessage(locale, 'auth.common.dragDrop')}
+              </span>
+              {multiple && maxFiles !== undefined && maxFiles > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {`Up to ${maxFiles} more image${maxFiles > 1 ? 's' : ''}`}
+                </span>
+              )}
+            </>
           )}
-          <span className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground/70">
-              {getMessage(locale, 'auth.common.clickUpload')}
-            </span>{' '}
-            {getMessage(locale, 'auth.common.dragDrop')}
-          </span>
         </button>
       )}
 
@@ -191,6 +258,7 @@ export function ImageUploader({
         ref={inputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         className="sr-only"
         tabIndex={-1}
         onChange={(e) => handleFiles(e.target.files)}

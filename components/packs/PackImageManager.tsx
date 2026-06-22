@@ -36,9 +36,11 @@ export function PackImageManager({
   const canAddMore = allUrls.length < PACK_MAX_IMAGES
 
   function handleNewUpload(url: string) {
+    // Re-derive allUrls at call time so parallel uploads stack correctly
+    const currentAll = [...(primaryUrl ? [primaryUrl] : []), ...galleryUrls]
     if (!primaryUrl) {
       onPrimaryChange(url)
-    } else {
+    } else if (currentAll.length < PACK_MAX_IMAGES) {
       onGalleryChange([...galleryUrls, url])
     }
   }
@@ -126,6 +128,8 @@ export function PackImageManager({
           uploadUrl={ROUTES.api.packs.uploadImage}
           locale={locale}
           ariaLabel={getMessage(locale, 'packs.galleryLabel')}
+          multiple
+          maxFiles={PACK_MAX_IMAGES - allUrls.length}
           onUploadComplete={handleNewUpload}
           onClear={() => {}}
         />
