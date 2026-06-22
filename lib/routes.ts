@@ -14,6 +14,9 @@ export const ROUTES = {
   // ── Authenticated ─────────────────────────────────────────────────────────
   dashboard: '/dashboard',
   settings: '/settings',
+  onboarding: '/onboarding',
+  services: '/services',
+  packs: '/packs',
 
   // ── API ───────────────────────────────────────────────────────────────────
   api: {
@@ -26,6 +29,18 @@ export const ROUTES = {
       updateSocials: '/api/clients/socials',
       changeSecurity: '/api/clients/security',
     },
+    services: {
+      catalog: '/api/services/catalog',
+      selection: '/api/services/selection',
+      custom: '/api/services/custom',
+    },
+    packs: {
+      list: '/api/packs',
+      uploadImage: '/api/packs/upload-image',
+    },
+    onboarding: {
+      complete: '/api/onboarding/complete',
+    },
   },
 } as const
 
@@ -33,6 +48,9 @@ export const ROUTES = {
 export const PROTECTED_ROUTES: readonly string[] = [
   ROUTES.dashboard,
   ROUTES.settings,
+  ROUTES.onboarding,
+  ROUTES.services,
+  ROUTES.packs,
 ]
 
 /** Routes that should redirect to /dashboard when already authenticated. */

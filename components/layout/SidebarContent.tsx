@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Settings, LogOut, ChevronUp } from 'lucide-react'
+import { LayoutDashboard, Settings, LogOut, ChevronUp, Camera, Package } from 'lucide-react'
 import { getMessage } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
 
@@ -21,6 +21,18 @@ const NAV_ITEMS = [
     href: ROUTES.dashboard,
     icon: LayoutDashboard,
     labelKey: 'nav.dashboard',
+  },
+  {
+    key: 'services',
+    href: ROUTES.services,
+    icon: Camera,
+    labelKey: 'nav.services',
+  },
+  {
+    key: 'packs',
+    href: ROUTES.packs,
+    icon: Package,
+    labelKey: 'nav.packs',
   },
 ] as const
 

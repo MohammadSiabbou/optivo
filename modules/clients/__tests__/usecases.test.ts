@@ -16,6 +16,11 @@ function makeRow(overrides: Partial<ClientRow> = {}): ClientRow {
     email: 'test@example.com',
     password: 'hashed_pw',
     logo_url: null,
+    instagram_url: null,
+    facebook_url: null,
+    linkedin_url: null,
+    twitter_url: null,
+    onboarding_completed_at: null,
     created_at: new Date(),
     updated_at: new Date(),
     ...overrides,
@@ -27,6 +32,7 @@ function makeRepo(overrides: Partial<IClientRepository> = {}): IClientRepository
     findByEmail: vi.fn().mockResolvedValue(null),
     findById: vi.fn().mockResolvedValue(null),
     create: vi.fn().mockResolvedValue(makeRow()),
+    update: vi.fn().mockResolvedValue(makeRow()),
     ...overrides,
   }
 }

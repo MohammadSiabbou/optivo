@@ -21,6 +21,7 @@ function makeRow(overrides: Partial<ClientRow> = {}): ClientRow {
     facebook_url: null,
     linkedin_url: null,
     twitter_url: null,
+    onboarding_completed_at: null,
     created_at: new Date(),
     updated_at: new Date(),
     ...overrides,

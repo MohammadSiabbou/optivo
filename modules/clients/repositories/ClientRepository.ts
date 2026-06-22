@@ -27,6 +27,11 @@ export class ClientRepository implements IClientRepository {
       email: data.email,
       password: data.password,
       logo_url: data.logo_url ?? null,
+      instagram_url: null,
+      facebook_url: null,
+      linkedin_url: null,
+      twitter_url: null,
+      onboarding_completed_at: null,
     })
   }
 

@@ -5,6 +5,8 @@
     "logout": "Log out",
     "logoAlt": "{name} logo",
     "dashboard": "Dashboard",
+    "services": "Services",
+    "packs": "Packs",
     "sidebarLabel": "Main navigation"
   },
   "settings": {
@@ -49,6 +51,107 @@
       "urlInvalid": "Please enter a valid URL (https://\u2026).",
       "currentPasswordRequired": "Current password is required.",
       "newPasswordSameAsCurrent": "New password must differ from the current one."
+    }
+  },
+  "onboarding": {
+    "pageTitle": "Set up your studio",
+    "welcome": "Welcome to Optivo",
+    "subtitle": "Let\u2019s set up your studio in a few quick steps.",
+    "steps": {
+      "photo": "Photo services",
+      "video": "Video services",
+      "packs": "Packs"
+    },
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip",
+    "finish": "Finish",
+    "saving": "Saving\u2026",
+    "progressLabel": "Step {current} of {total}",
+    "completedToast": "Your studio is all set!"
+  },
+  "services": {
+    "photo": {
+      "title": "Photo services",
+      "description": "Select the photography services your studio offers."
+    },
+    "video": {
+      "title": "Video services",
+      "description": "Select the video services your studio offers."
+    },
+    "offerQuestion": "What does your studio offer?",
+    "photoOption": "Photography",
+    "videoOption": "Videography",
+    "addCustom": "Add your own\u2026",
+    "customLabelPlaceholder": "e.g. Boudoir photography",
+    "customLabelAria": "Custom service name",
+    "removeCustomAria": "Remove {label}",
+    "emptyState": "No services found.",
+    "saveButton": "Save services",
+    "saving": "Saving\u2026",
+    "savedSuccess": "Services saved.",
+    "catalog": {
+      "outdoorPhotography": "Outdoor / on-location photography",
+      "studioPhotography": "Studio photography",
+      "portraitPhotography": "Portrait photography",
+      "eventPhotography": "Event photography",
+      "weddingPhotography": "Wedding photography",
+      "productPhotography": "Product photography",
+      "realEstatePhotography": "Real-estate / architecture",
+      "aerialPhotography": "Aerial / drone photography",
+      "newbornPhotography": "Newborn / family",
+      "fashionPhotography": "Fashion / editorial",
+      "cinematicFilms": "Cinematic films",
+      "slowMotionVideo": "Slow-motion video",
+      "eventVideography": "Event videography",
+      "weddingFilms": "Wedding films",
+      "droneVideo": "Drone / aerial video",
+      "promotionalVideo": "Promotional / commercial",
+      "musicVideos": "Music videos",
+      "reelsShortForm": "Reels / short-form social"
+    },
+    "validation": {
+      "categoryInvalid": "Invalid service category.",
+      "customLabelRequired": "Service name is required.",
+      "customLabelLength": "Service name must be between 2 and 80 characters.",
+      "selectAtLeastOne": "Please select at least one service."
+    }
+  },
+  "packs": {
+    "title": "Packs",
+    "description": "Create service packs to showcase your offerings.",
+    "addPack": "Add pack",
+    "editPack": "Edit pack",
+    "deletePack": "Delete pack",
+    "nameLabel": "Pack name",
+    "priceLabel": "Price",
+    "oldPriceLabel": "Original price",
+    "oldPriceHint": "Optional \u2014 shown as a strike-through price",
+    "featuresLabel": "What\u2019s included",
+    "featureLinePlaceholder": "e.g. 2 hours of shooting",
+    "addFeatureLine": "Add line",
+    "removeFeatureLineAria": "Remove feature line",
+    "primaryImageLabel": "Primary image",
+    "galleryLabel": "Gallery images",
+    "imageCountHint": "Up to 10 images total",
+    "setPrimaryAria": "Set as primary image",
+    "removeImageAria": "Remove image",
+    "saveButton": "Save pack",
+    "saving": "Saving\u2026",
+    "savedSuccess": "Pack saved.",
+    "emptyState": "No packs yet. Add your first pack to get started.",
+    "deleteConfirm": "Are you sure you want to delete this pack?",
+    "cancelButton": "Cancel",
+    "validation": {
+      "nameRequired": "Pack name is required.",
+      "nameLength": "Pack name must be between 2 and 120 characters.",
+      "priceRequired": "Price is required.",
+      "priceInvalid": "Please enter a valid price (0 or greater).",
+      "oldPriceInvalid": "Please enter a valid original price (0 or greater).",
+      "primaryImageRequired": "A primary image is required.",
+      "tooManyImages": "You can add up to 10 images total.",
+      "tooManyFeatures": "You can add up to 30 feature lines.",
+      "featureTooLong": "Each feature line must be 120 characters or fewer."
     }
   },
   "auth": {
